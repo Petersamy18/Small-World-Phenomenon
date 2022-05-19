@@ -112,7 +112,7 @@ namespace Small_World_Phenomenon
 
 
             CreateAdjacencyList_MoviesActors();
-            //CreateAdjacencyList_Actors();
+            CreateAdjacencyList_Actors();
 
             // variables to store source and destination(Handle queries)
             for (int i = 0; i < actorsLines.Length; i++)
@@ -177,6 +177,50 @@ namespace Small_World_Phenomenon
                 ID++;
             }
 
+        }
+        
+        
+           public void CreateAdjacencyList_Actors()
+        {
+            Initialize();
+
+
+            foreach (Movie movie in allMovies)
+            {
+                int first = 0;
+                int movie_actorsL = movie.actors.Count();
+                while (first < movie_actorsL)
+                {
+                    for (int second = 0; second < movie_actorsL; second++)
+                    {
+                        int secondActor = actors_as_int[movie.actors[second]];
+                        int firstActor = actors_as_int[movie.actors[first]];
+
+                        //checking if the two actors is not the same
+                        if (movie.actors[first] != movie.actors[second])
+                        {
+                            //checking if they have not been discovered with each other before
+                            if (Actors_adjlist[firstActor].ContainsKey(secondActor) == false)
+                            {
+                                Actor_MoviePair[firstActor].Add(actors_as_strings[secondActor], movie.NameOfMovie);
+
+                                //saving that these two actors have performed together
+                                Actors_adjlist[firstActor].Add(secondActor, 1);
+                            }
+
+                            //checking if they have been discovered with each other before
+                            else if (Actors_adjlist[firstActor].ContainsKey(secondActor) == true)
+                            {
+                                Actors_adjlist[firstActor][secondActor]++; //increment the no. Movies they have performed in together
+                            }
+
+                        }
+                    }
+
+                    first++;
+                }
+
+            }
         }
 
 
