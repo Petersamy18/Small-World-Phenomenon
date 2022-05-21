@@ -304,7 +304,7 @@ namespace Small_World_Phenomenon
             Console.WriteLine(distances[destination_int] + "\t\t\t\t\t" + RS[destination_int]);
             List<int> path = new List<int>();
             int src = actors_as_int[source];
-            Find_All_Paths(destination_int, path, parent);
+            Find_Path(destination_int, path, parent);
             path.Add(src);
             path.Reverse();
 
@@ -337,7 +337,7 @@ namespace Small_World_Phenomenon
             
         }
 
-        public void Find_All_Paths(int destination, List<int> path, Dictionary<int, int> parent)
+        public void Find_Path(int destination, List<int> path, Dictionary<int, int> parent)
         {
             try
             {
@@ -347,7 +347,7 @@ namespace Small_World_Phenomenon
                 
                 int p = parent[destination];
                 path.Add(destination);
-                Find_All_Paths(p, path, parent);
+                Find_Path(p, path, parent);
                 
             }
             catch (Exception e)
