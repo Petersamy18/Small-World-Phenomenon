@@ -222,6 +222,140 @@ namespace Small_World_Phenomenon
 
             }
         }
+          public Dictionary<int, int> parent = new Dictionary<int, int>();
+         //Apply BFS algorithm to find the shortest path between source and desination vertices
+        public void Bfs_Visit(string source, string destination)
+        {
+            Dictionary<int, int> distances = new Dictionary<int, int>();
+            Dictionary<int, int> RS = new Dictionary<int, int>();
+            Dictionary<int, string> color = new Dictionary<int, string>();
+
+            Queue<int> q = new Queue<int>();
+
+            int source_int = actors_as_int[source];
+            int destination_int = actors_as_int[destination];
+
+            //loop to initialize the distance array with maximum values
+            for (int i = 0; i < uniqeActors.Count; i++)
+            {
+                distances[i] = 2000000000;
+                color[i] = "white";
+                RS.Add(i, 0);
+            }
+
+            //add the source in the queue
+            q.Enqueue(source_int);
+            
+            //initialization related to the source vertex
+            parent[source_int] = -1;
+            distances[source_int] = 0;
+            color[source_int] = "gray";
+
+            bool E = false;
+            while (q.Count() != 0)
+            {
+
+                int u = q.Dequeue();
+                if (u == destination_int && E == true)
+                    break;
+
+                foreach (KeyValuePair<int, int> vertex in Actors_adjlist[u])
+                {
+
+                    if (color[vertex.Key] == "white") //still not visited yet, let's visit it
+                    {
+                        color[vertex.Key] = "gray"; //mark it as visited
+                        distances[vertex.Key] = distances[u] + 1;
+
+                        parent[vertex.Key] = u;
+
+                        q.Enqueue(vertex.Key);
+                    }
+
+
+                    if (vertex.Key != destination_int && distances[u] < distances[vertex.Key])
+                    {
+                        if (RS[u] + Actors_adjlist[u][vertex.Key] > RS[vertex.Key])
+                            RS[vertex.Key] = RS[u] + Actors_adjlist[u][vertex.Key];
+
+                    }
+                    else if (vertex.Key == destination_int && distances[u] < distances[destination_int])
+                    {
+                        if (RS[u] + Actors_adjlist[u][vertex.Key] > RS[vertex.Key])
+                        {
+
+                            RS[vertex.Key] = RS[u] + Actors_adjlist[u][vertex.Key];
+                            parent[vertex.Key] = u;
+                            E = true;
+                            break;
+                            
+                        }
+                    }
+
+                }
+                color[u] = "black"; //mark it as fully discovered
+                
+            }
+
+            int actor1_Int;
+            int actor2_Int;
+
+            Console.WriteLine("Degree Of Separation: \tRelation Strength: ");
+            Console.WriteLine(distances[destination_int] + "\t\t\t\t\t" + RS[destination_int]);
+            List<int> path = new List<int>();
+            int src = actors_as_int[source];
+            Find_All_Paths(destination_int, path, parent);
+            path.Add(src);
+            path.Reverse();
+
+            Console.Write("Chain of Actors: ");
+            for (int i = 0; i < path.Count; i++)
+            {
+                Console.Write(actors_as_strings[path[i]]);
+                if ((i != path.Count - 1))
+                    Console.Write(" -> ");
+            }
+
+            Console.WriteLine();
+            Console.Write("Chain Of Movies: ");
+
+            for (int i = 0; i < path.Count; i++)
+            {
+                if (i + 1 == path.Count)
+                {
+                    break;
+                }
+                actor1_Int = path[i];
+                actor2_Int = path[i + 1];
+                
+                Console.Write(Actor_MoviePair[actor1_Int][actors_as_strings[actor2_Int]]);
+                if ((i+2 != path.Count))
+                    Console.Write(" => ");
+            }
+            Console.WriteLine();
+            Console.WriteLine("----------------------------------------------------------------------------------");
+            
+        }
+
+        public void Find_All_Paths(int destination, List<int> path, Dictionary<int, int> parent)
+        {
+            try
+            {
+                //base_case
+                if (parent[destination] == -1)
+                    return;
+                
+                int p = parent[destination];
+                path.Add(destination);
+                Find_All_Paths(p, path, parent);
+                
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
 
 
         
